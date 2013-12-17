@@ -16,37 +16,40 @@ API
 
 return true (the new service has been added)/false (error)
 
+#### Generate new invites for a service
+
 #### Get 1 invite
 
-`GET /invites`
-- auth required (login/pass)
+`GET /services/{name}/invites`
+- password
 
 return 1 string (the invite code)
 
 #### Check 1 invite
 
-`GET /invites/{invite_code}`
-- auth required
+`GET /services/{name}/invites/{invite_code}`
 
 return true (exist and still available)/false (doesnt exist or has already been used)
 
 #### Use 1 invite
 
-`PUT /invites/{invite_code}`
+`PUT /services/{name}/invites/{invite_code}`
 
 return true (invite used)/false (invite could not be used: invalid or already used)
 
 #### Cancel/Remove invite
 
-`DELETE /invites/{invite_code}`
+`DELETE /services/{name}/invites/{invite_code}`
+- password
 
 return true (has been deleted)/false (has not been deleted)
 
 #### Remove all invites
 
-`DELETE /invites`
+`DELETE /services/{name}/invites`
+- password
 
 #### Remove service
 
 `DELETE /services/{name}`
-- auth required
+- password
