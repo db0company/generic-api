@@ -20,34 +20,39 @@ return true (the new service has been added)/false (error)
 
 #### Get 1 invite
 
-`GET /services/{name}/invites`
+`GET /invites`
 - password
+- service_name
 
 return 1 string (the invite code)
 
 #### Check 1 invite
 
-`GET /services/{name}/invites/{invite_code}`
+`GET /invites/{invite_code}`
+- service_name
 
 return true (exist and still available)/false (doesnt exist or has already been used)
 
 #### Use 1 invite
 
-`PUT /services/{name}/invites/{invite_code}`
+`PUT /invites/{invite_code}`
+- service_name
 
 return true (invite used)/false (invite could not be used: invalid or already used)
 
 #### Cancel/Remove invite
 
-`DELETE /services/{name}/invites/{invite_code}`
+`DELETE /invites/{invite_code}`
 - password
+- service_name
 
 return true (has been deleted)/false (has not been deleted)
 
 #### Remove all invites
 
-`DELETE /services/{name}/invites`
+`DELETE /invites`
 - password
+- service_name
 
 #### Remove service
 
