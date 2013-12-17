@@ -1,0 +1,13 @@
+<?php
+//
+// Made by        db0
+// Contact        db0company@gmail.com
+// Website        http://db0.fr/
+// Repo           https://github.com/db0company/invite
+//
+
+$conf['sql']['login'] = 'john';
+$conf['sql']['pass'] = 'ak94ns93n';
+$conf['sql']['dbname'] = 'invite';
+$conf['sql']['host'] = 'localhost';
+$conf['verbose'] = false;
