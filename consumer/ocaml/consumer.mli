@@ -23,6 +23,7 @@ val format_bool : string -> bool
 val format_raw : string -> string
 
 val connect : string -> unit t
+val disconnect : unit -> unit
 
 val go :
   ?rtype:rtype
