@@ -1,3 +1,6 @@
 conf.php
 *~
 #*#
+*.cmi
+*.cmo
+check_invite
