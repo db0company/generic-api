@@ -65,6 +65,18 @@ $methods =
                 'doc' => 'Use this invite. It becomes invalid onces it has been used.',
                 ),
 
+          array('type' => 'POST',
+                'resource' => 'invites',
+                'one' => false,
+                'function' => 'generateInvites',
+                'auth_required' => true,
+                'required_params' => array('service_name' => 'string',
+					   'password' => 'password'),
+                'optional_params' => array('nb_invites' => 100),
+                'response' => 'boolean',
+                'doc' => 'Generate a new bunch of invites associated to this service.',
+                ),
+
           array('type' => 'DELETE',
                 'resource' => 'invites',
                 'one' => true,
