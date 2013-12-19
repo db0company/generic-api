@@ -35,7 +35,8 @@ class InviteModel {
 
     $r = $this->db->prepare('INSERT INTO invites(service_name, invite, sent, used) VALUES(?, ?, false, false)');
     for ($i = 0; $i < $params['nb_invites']; $i++) {
-      if (!($this->execute($r, array($params['service_name'], uniqid()))))
+      $invite = uniqid().uniqid().uniqid();
+      if (!($this->execute($r, array($params['service_name'], $invite))))
         return array(500);
     }
     return true;
