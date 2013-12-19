@@ -54,6 +54,7 @@ function modelCall($function, $params) {
 }
 
 function main() {
+  header("Access-Control-Allow-Origin: *");
   $type = isset($_GET['type']) ? $_GET['type'] : $_SERVER['REQUEST_METHOD'];
   $resource = $_GET['resource'];
   $id = isset($_GET['id']) ? $_GET['id'] : null;
