@@ -3,11 +3,16 @@
 // Made by        db0
 // Contact        db0company@gmail.com
 // Website        http://db0.fr/
-// Repo           https://github.com/db0company/invite
+// Repo           https://github.com/db0company/generic-api
 //
 
 $conf['sql']['login'] = 'john';
 $conf['sql']['pass'] = 'ak94ns93n';
-$conf['sql']['dbname'] = 'invite';
+$conf['sql']['dbname'] = 'sample';
 $conf['sql']['host'] = 'localhost';
+
+$conf['doc']['name'] = 'Sample API';
+
 $conf['verbose'] = false;
+
+$conf['format'] = 'json'; // 'json', 'php' or 'raw'

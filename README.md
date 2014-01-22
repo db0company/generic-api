@@ -1,10 +1,16 @@
-invite
-======
+Generic API
+===========
 
-[wip] Invite service API. Aimed to be used by AndroidReviews.
+The simplest way to create RESTful APIs using PHP, with an automatic documentation.
 
-Simplest API ever. Not RESTful at all. I don't give a f*ck here.
+Create your own API
+-------------------
 
-The documentation is automatically generated from the sources.
+- Copy `conf.php.template` to `conf.php` and edit it to use your own settings
+- Edit the `methods.php` file to describe your methods using the format in comments
+- Done!
 
-Preview: http://invite.paysdu42.fr/
+Notes
+-----
+
+- If you're not using the PDO mySQL database in the `mysql.php`, you don't need to fill the `$conf['sql']` arguments

@@ -3,10 +3,15 @@
 // Made by        db0
 // Contact        db0company@gmail.com
 // Website        http://db0.fr/
-// Repo           https://github.com/db0company/invite
+// Repo           https://github.com/db0company/generic-api
 //
 
 include_once('conf.php');
+include_once("include.php");
+
+///////////////////////////////////////////////////////////
+// Checkers
+///////////////////////////////////////////////////////////
 
 function typeChecker($type, $value) {
   if ($type == 'string')
@@ -21,7 +26,7 @@ function typeChecker($type, $value) {
   return $value;
 }
 
-function checkParams($params, $required_params, $optional_params) {
+function paramsChecker($params, $required_params, $optional_params) {
   $finalParams = array();
   // check required
   foreach ($required_params as $key => $type) {
@@ -39,76 +44,63 @@ function checkParams($params, $required_params, $optional_params) {
   return $finalParams;
 }
 
-function modelCall($function, $params) {
-  include_once('model.php');
-  global $conf;
-  $model = new InviteModel($conf['sql']['login'],
-                           $conf['sql']['pass'],
-                           $conf['sql']['dbname'],
-                           $conf['sql']['host'],
-                           $conf['verbose']
-                           );
-  if (!method_exists($model, $function))
-    return array(501);
-  return $model->$function($params);
+///////////////////////////////////////////////////////////
+// Errors handling
+///////////////////////////////////////////////////////////
+
+function errorHandler_aux($error_code, $method) {
+  global $errors;
+  $error['code'] = $error_code;
+  $error['text'] = $errors[$error['code']][0];
+  $error['content'] = is_callable($errors[$error['code']][1]) ?
+    $errors[$error['code']][1]($method) : $errors[$error['code']][1];
+  return $error;
 }
 
-function main() {
+function errorHandler($error, $method = null) {
+  global $errors, $default_error;
+  if (is_array($error));
+  elseif ((is_int($error)
+	   || intval($error) != 0)
+	  && array_key_exists($error, $errors))
+    $error = errorHandler_aux($error, $method);
+  else
+    $error = errorHandler_aux($default_error, $method);
+  header('HTTP/1.1 '.$error['code'].' '.$error['text']);
+  echo $error['content'];
+}
+
+///////////////////////////////////////////////////////////
+// API Call method
+///////////////////////////////////////////////////////////
+
+function api($methods) {
   header("Access-Control-Allow-Origin: *");
   $type = isset($_GET['type']) ? $_GET['type'] : $_SERVER['REQUEST_METHOD'];
   $resource = $_GET['resource'];
   $id = isset($_GET['id']) ? $_GET['id'] : null;
 
-  include_once('methods.php');
   foreach ($methods as $method) {
     if ($method['type'] == $type
         && $method['resource'] == $resource
         && (($method['one'] === true && $id)
             || $method['one'] === false && $id === null)
         ) {
-      if (!($params = checkParams($_GET, $method['required_params'],
-                                  $method['optional_params']))) {
-        header("HTTP/1.1 400 Bad Request");
-        echo 'Required parameters missing: ';
-        echo implode(', ', array_keys($method['required_params']));
-        return ;
-      }
+      if (($params = paramsChecker($_GET, $method['required_params'],
+				   $method['optional_params'])) === false)
+	return errorHandler(400, $method);
       if ($method['one'])
         $params['id'] = typeChecker('string', $id);
-      $r = modelCall($method['function'], $params);
-      if ($r === false) echo 'false';
-      elseif ($r === true) echo 'true';
-      elseif (is_array($r)) { // code, content
-        if ($r[0] == 403) {
-          header("HTTP/1.1 403 Forbidden");
-          echo 'Authentication failed.';
-        }
-        elseif ($r[0] == 500) {
-          header("HTTP/1.1 500 Internal Server Error");
-          echo 'Something went wrong.';
-        }
-        elseif ($r[0] == 202) {
-          header("HTTP/1.1 202 No Result");
-        }
-        elseif ($r[0] == 501) {
-          header("HTTP/1.1 501 Not implemented");
-          echo 'This method is not implemented. It should be!';
-        }
-        else {
-          header("HTTP/1.1 ".$r[0]);
-          echo $r[1];
-        }
-      }
-      else print_r($r);
+      if (!is_callable($method['function']))
+	return errorHandler(501, $method);
+      try { $r = $method['function']($method['resource'], $id, $params); }
+      catch (Exception $code) { return errorHandler($code->getMessage(), $method); }
+      echo convertResponse($r, isset($_GET['format']) ? $_GET['format'] : null);
       return ;
     }
   }
-  header("HTTP/1.1 404 Not found");
-  echo 'No such method.';
-  global $conf;
-  if ($conf['verbose']) {
-    echo ' type = '.$type.', resource = '.$resource.', id = '.$id;
-  }
+  return errorHandler(404);
 }
 
-main();
+include_once('methods.php');
+api($methods);
