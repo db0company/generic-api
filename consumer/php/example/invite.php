@@ -1,6 +1,6 @@
 <?php
 
-include_once('../consumer.php');
+include_once(__DIR__.'/../consumer.php');
 
 function get_invite($service_name, $password, $unique = true) {
   return consume('http://invite.paysdu42.fr',
@@ -25,8 +25,8 @@ function use_invite($service_name, $invite) {
                  array('service_name' => $service_name));
 }
 
-if ($invite = get_invite('test', 'testtest'))
-  echo $invite;
-else
-  echo 'Error: Could not get any invite';
-echo "\n";
+// if ($invite = get_invite('test', 'testtest'))
+//   echo $invite;
+// else
+//   echo 'Error: Could not get any invite';
+// echo "\n";
