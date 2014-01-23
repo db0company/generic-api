@@ -24,6 +24,8 @@ include_once('include.php');
   </head>
   <body style="padding: 2%">
 
+  <h1><?= $conf['doc']['name'] ?></h1>
+
   <h2>Methods</h2>
 <?php
 include_once('methods.php');
