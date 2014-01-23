@@ -76,9 +76,10 @@ function errorHandler($error, $method = null) {
 
 function api($methods) {
   header("Access-Control-Allow-Origin: *");
-  $type = isset($_GET['type']) ? $_GET['type'] : $_SERVER['REQUEST_METHOD'];
-  $resource = $_GET['resource'];
-  $id = isset($_GET['id']) ? $_GET['id'] : null;
+  $allparams = array_merge($_GET, $_POST);
+  $type = isset($allparams['type']) ? $allparams['type'] : $_SERVER['REQUEST_METHOD'];
+  $resource = $allparams['resource'];
+  $id = isset($allparams['id']) ? $allparams['id'] : null;
 
   foreach ($methods as $method) {
     if ($method['type'] == $type
@@ -86,7 +87,7 @@ function api($methods) {
         && (($method['one'] === true && $id)
             || $method['one'] === false && $id === null)
         ) {
-      if (($params = paramsChecker($_GET, $method['required_params'],
+      if (($params = paramsChecker($allparams, $method['required_params'],
 				   $method['optional_params'])) === false)
 	return errorHandler(400, $method);
       if ($method['one'])
@@ -95,7 +96,7 @@ function api($methods) {
 	return errorHandler(501, $method);
       try { $r = $method['function']($method['resource'], $id, $params); }
       catch (Exception $code) { return errorHandler($code->getMessage(), $method); }
-      echo convertResponse($r, isset($_GET['format']) ? $_GET['format'] : null);
+      echo convertResponse($r, isset($allparams['format']) ? $allparams['format'] : null);
       return ;
     }
   }
