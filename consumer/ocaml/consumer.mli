@@ -18,6 +18,7 @@ val rtype_to_string : rtype -> string
 val rtype_of_string : string -> rtype
 
 val format_json : (Yojson.Basic.json -> 'a) -> string -> 'a
+val format_json_list : (Yojson.Basic.json -> 'a) -> string -> 'a list
 val format_raw_json : string -> Yojson.Basic.json
 val format_bool : string -> bool
 val format_raw : string -> string

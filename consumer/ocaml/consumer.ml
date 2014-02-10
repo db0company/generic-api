@@ -69,6 +69,13 @@ let disconnect () =
 
 let format_raw_json text = Yojson.Basic.from_string text
 let format_json f text = f (format_raw_json text)
+let format_json_list f text =
+  try
+    (let open Yojson.Basic.Util in
+     match format_raw_json text |> to_option (convert_each f) with
+       | Some l -> l
+       | None -> [])
+  with Yojson.Json_error "Blank input data" -> []
 let format_bool text = try bool_of_string text with _ -> false
 let format_raw text = text
 
@@ -102,6 +109,7 @@ let go ?(rtype = GET) ?(resource = "") ?(id = "") ?(get = []) format =
         let text = Buffer.contents result in
         match Curl.get_responsecode c with
           | 200  -> Result (format text)
+	  | 202  -> Result (format "")
           | code -> Error (code, text))
       with
         | Curl.CurlException (_, _, _) -> Error (400, !error_buffer)
