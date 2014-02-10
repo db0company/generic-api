@@ -21,6 +21,8 @@ function typeChecker($type, $value) {
   elseif ($type == 'bool') {
     return $value ? true : false;
   }
+  elseif ($type == 'list')
+    return implode(',', $value);
   elseif ($type == 'password')
     return $value;
   return $value;
@@ -80,6 +82,11 @@ function api($methods) {
   $type = isset($allparams['type']) ? $allparams['type'] : $_SERVER['REQUEST_METHOD'];
   $resource = $allparams['resource'];
   $id = isset($allparams['id']) ? $allparams['id'] : null;
+
+  if ($type == 'OPTIONS') {
+    header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+    return ;
+  }
 
   foreach ($methods as $method) {
     if ($method['type'] == $type
