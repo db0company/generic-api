@@ -18,7 +18,7 @@ function consume($base_url, $resource, $format = 'json',
     return false;
 
   if ($format == 'json')
-    return json_decode($result);
+    return json_decode($result, true);
   elseif ($format == 'bool') {
     if ($result == 'false')
       return false;
