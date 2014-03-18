@@ -47,7 +47,7 @@ function convertResponse($response, $format = null) {
   if (!$format)
     $format = $conf['format'];
   if ($format == 'json' && is_array($response))
-    return json_encode(array_reverse($response));
+    return json_encode($response);
   if ($format == 'php')
     return print_r($response, true);
   return $response;
