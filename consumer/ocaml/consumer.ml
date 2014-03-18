@@ -36,7 +36,7 @@ let rtype_of_string = function
 (* Curl Connection                                                            *)
 (* ************************************************************************** *)
 
-let connection = ref None
+let connections = ref []
 
 let writer accum data =
   Buffer.add_string accum data;
@@ -48,20 +48,19 @@ let connect base_url =
   try (
     Curl.global_init Curl.CURLINIT_GLOBALALL;
     let c = Curl.init () in
-    connection := Some (c, base_url);
+    connections := ((base_url, c)::(!connections));
     Curl.set_errorbuffer c error_buffer;
     Curl.set_writefunction c (writer result);
     Curl.set_followlocation c true;
-    Result ())
+    Result c)
   with _ -> Error (404, "Connection failure")
 
-let disconnect () =
-  match !connection with
-    | Some (c, _) ->
-      connection := None;
+let disconnect base_url =
+  try let c = List.assoc base_url !connections in
+      connections := List.filter (fun (url, _) -> base_url != url) !connections;
       Curl.cleanup c;
       Curl.global_cleanup ()
-    | _ -> ()
+  with _ -> ()
 
 (* ************************************************************************** *)
 (* Format Helpers                                                             *)
@@ -83,11 +82,11 @@ let format_raw text = text
 (* Curl Method handling                                                       *)
 (* ************************************************************************** *)
 
-let go ?(rtype = GET) ?(resource = "") ?(id = "") ?(get = []) format =
+let go ?(rtype = GET) ?(resource = "") ?(id = "") ?(get = []) url format =
 
-  match !connection with
-    | None -> Error (400, "Not connected")
-    | Some (c, base_url) ->
+  match (try Result (List.assoc url !connections) with _ -> connect url) with
+    | Error e -> Error e
+    | Result c ->
 
       let parameters_to_string parameters =
         let str =
@@ -97,7 +96,7 @@ let go ?(rtype = GET) ?(resource = "") ?(id = "") ?(get = []) format =
         else "?" ^ (Str.string_after str 1) in
 
       let url =
-        base_url ^ resource
+        url ^ resource
         ^ (if id = "" then "" else "/" ^ id)
         ^ (parameters_to_string get) in
 

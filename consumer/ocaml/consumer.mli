@@ -23,13 +23,13 @@ val format_raw_json : string -> Yojson.Basic.json
 val format_bool : string -> bool
 val format_raw : string -> string
 
-val connect : string -> unit t
-val disconnect : unit -> unit
+val disconnect : string -> unit
 
 val go :
   ?rtype:rtype
   -> ?resource:string
   -> ?id:string
   -> ?get:(string * string) list
+  -> string (* url *)
   -> (string -> 'a)
   -> 'a t
