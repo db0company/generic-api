@@ -14,3 +14,5 @@ Notes
 -----
 
 - If you're not using the PDO mySQL database in the `mysql.php`, you don't need to fill the `$conf['sql']` arguments
+
+![](http://i.imgur.com/mGhXK70.png)
